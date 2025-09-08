@@ -1,3 +1,21 @@
+# 1. Запустите контейнер в фоне
+docker-compose up -d
+
+# 2. Теперь можете подключаться
+docker-compose exec postgres psql -U postgres
+
+# Подключение к PostgreSQL
+docker-compose exec postgres psql -U postgres
+
+# Внутри psql можно выполнять команды:
+# \l          - список баз данных
+# \c pagila   - подключение к базе pagila
+# \dt         - список таблиц
+# \q          - выход
+
+# Остановка контейнера
+docker-compose down
+
 # Запустить контейнер
 docker run [OPTIONS] IMAGE [COMMAND] [ARG...]
 
