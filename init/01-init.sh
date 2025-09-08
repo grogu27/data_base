@@ -1,5 +1,3 @@
-mkdir -p init
-cat > init/01-init.sh << 'EOF'
 #!/bin/bash
 set -e
 

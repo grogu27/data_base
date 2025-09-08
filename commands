@@ -1,0 +1,129 @@
+# Запустить контейнер
+docker run [OPTIONS] IMAGE [COMMAND] [ARG...]
+
+# Посмотреть запущенные контейнеры
+docker ps
+
+# Посмотреть все контейнеры (включая остановленные)
+docker ps -a
+
+# Остановить контейнер
+docker stop CONTAINER_NAME_OR_ID
+
+# Запустить остановленный контейнер
+docker start CONTAINER_NAME_OR_ID
+
+# Перезапустить контейнер
+docker restart CONTAINER_NAME_OR_ID
+
+# Удалить контейнер
+docker rm CONTAINER_NAME_OR_ID
+
+# Выполнить команду в запущенном контейнере
+docker exec -it CONTAINER_NAME_OR_ID COMMAND
+
+# Посмотреть загруженные образы
+docker images
+
+# Загрузить образ
+docker pull IMAGE_NAME
+
+# Удалить образ
+docker rmi IMAGE_NAME
+
+# Построить образ из Dockerfile
+docker build -t IMAGE_NAME .
+
+# Посмотреть логи контейнера
+docker logs CONTAINER_NAME_OR_ID
+
+# Посмотреть логи в реальном времени
+docker logs -f CONTAINER_NAME_OR_ID
+
+# Получить информацию о контейнере
+docker inspect CONTAINER_NAME_OR_ID
+
+# Запустить сервисы в фоне
+docker-compose up -d
+
+# Запустить с пересозданием контейнеров
+docker-compose up -d --force-recreate
+
+# Остановить и удалить контейнеры
+docker-compose down
+
+# Остановить сервисы
+docker-compose stop
+
+# Запустить остановленные сервисы
+docker-compose start
+
+# Перезапустить сервисы
+docker-compose restart
+
+# Посмотреть статус сервисов
+docker-compose ps
+
+# Посмотреть логи всех сервисов
+docker-compose logs
+
+# Посмотреть логи конкретного сервиса
+docker-compose logs SERVICE_NAME
+
+# Посмотреть логи в реальном времени
+docker-compose logs -f
+
+# Выполнить команду в сервисе
+docker-compose exec SERVICE_NAME COMMAND
+
+# Например, подключение к PostgreSQL:
+docker-compose exec postgres psql -U postgres
+
+# Вход в контейнер bash
+docker-compose exec SERVICE_NAME bash
+
+# Перейти в каталог проекта
+cd ~/Study/data_base
+
+# Запустить кластер
+docker-compose up -d
+
+# Остановить кластер
+docker-compose down
+
+# Проверить статус
+docker-compose ps
+
+# Подключение к PostgreSQL
+docker-compose exec postgres psql -U postgres
+
+# Подключение к конкретной базе
+docker-compose exec postgres psql -U postgres -d pagila
+
+# Выполнение SQL-запроса
+docker-compose exec postgres psql -U postgres -c "SHOW data_checksums;"
+
+# Список баз данных
+docker-compose exec postgres psql -U postgres -c "\l"
+
+# Просмотр таблиц в базе pagila
+docker-compose exec postgres psql -U postgres -d pagila -c "\dt"
+
+# Просмотр логов инициализации
+docker-compose logs postgres
+
+# Проверка контрольных сумм
+docker-compose exec postgres psql -U postgres -c "SHOW data_checksums;"
+
+# Проверить, какие порты заняты
+sudo netstat -tlnp | grep :5432
+
+# Остановить системный PostgreSQL (если мешает)
+sudo systemctl stop postgresql
+
+# Посмотреть переменные окружения
+cat .env
+
+# Проверить версии
+docker --version
+docker-compose --version
