@@ -1,0 +1,8 @@
+LAB1 HOW TO RUN:
+
+docker exec -i lab1-postgres-1 su - postgres -c "psql -U lab -d pagila" < pagila-schema.sql
+docker exec -i lab1-postgres-1 su - postgres -c "psql -U lab -d pagila" < pagila-data.sql
+
+docker exec -it lab1-postgres-1 su - postgres -c "psql -U lab -d pagila -c '\dt'"
+
+docker exec -it lab1-postgres-1 su - postgres -c "psql -U lab -d pagila -c 'SELECT * FROM actor LIMIT 5;'"
