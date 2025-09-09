@@ -1,8 +1,10 @@
 LAB1 HOW TO RUN:
 
-docker exec -i lab1-postgres-1 su - postgres -c "psql -U lab -d pagila" < pagila-schema.sql
-docker exec -i lab1-postgres-1 su - postgres -c "psql -U lab -d pagila" < pagila-data.sql
+1. Скопируй SQL-файл в контейнер:
+sudo docker cp demo-big-20170815.sql lab1-postgres-1:/tmp/
 
-docker exec -it lab1-postgres-1 su - postgres -c "psql -U lab -d pagila -c '\dt'"
+2. Запусти скрипт, подключившись к служебной базе postgres:
+sudo docker exec -it lab1-postgres-1 su - postgres -c "psql -U lab -d postgres -f /tmp/demo-big-20170815.sql" 
 
-docker exec -it lab1-postgres-1 su - postgres -c "psql -U lab -d pagila -c 'SELECT * FROM actor LIMIT 5;'"
+3. Проверь, что база demo создалась:
+sudo docker exec -it lab1-postgres-1 su - postgres -c "psql -U lab -d demo -c '\dt'"
