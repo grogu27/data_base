@@ -1,5 +1,6 @@
 LAB1 HOW TO RUN:
-
+https://postgrespro.ru/docs/postgrespro/current/demodb-bookings-installation
+download big database
 1. Скопируй SQL-файл в контейнер:
 sudo docker cp demo-big-20170815.sql lab1-postgres-1:/tmp/
 
