@@ -1,4 +1,5 @@
-version: '3.8'
+# Уберите version - он устарел
+# version: '3.8'  <- удалите эту строку
 
 services:
   postgres:
@@ -12,9 +13,8 @@ services:
     ports:
       - "${POSTGRES_PORT}:5432"
     volumes:
-      - ./data:/var/lib/postgresql/data
-      - ./init:/docker-entrypoint-initdb.d
-      - ./sql:/docker-entrypoint-initdb.d/sql
+      - ./data:/var/lib/postgresql/data 
+      - ./init:/docker-entrypoint-initdb.d:ro
     restart: unless-stopped
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER}"]
