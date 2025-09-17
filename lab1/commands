@@ -2,10 +2,11 @@
 docker-compose up -d
 
 # 2. Теперь можете подключаться
-docker-compose exec postgres psql -U postgres
+docker-compose exec postgres psql -U lab -d database
 
-# Подключение к PostgreSQL
-docker-compose exec postgres psql -U postgres
+# Для Ubuntu/Debian:
+sudo systemctl stop postgresql
+sudo systemctl disable postgresql  # (опционально, чтобы не запускался при загрузке)
 
 # Внутри psql можно выполнять команды:
 # \l          - список баз данных
@@ -15,6 +16,99 @@ docker-compose exec postgres psql -U postgres
 
 # Остановка контейнера
 docker-compose down
+
+docker exec -it lab1-postgres-1 psql -U lab -d database
+
+# ✅ 1. Узнать размер каждой базы данных
+SELECT
+    datname AS "Имя базы",
+    pg_size_pretty(pg_database_size(datname)) AS "Размер",
+    pg_database_size(datname) AS "Размер (байты)"
+FROM
+    pg_database
+ORDER BY
+    pg_database_size(datname) DESC;
+
+
+#✅ 1. Посмотрим список таблиц в demo
+\dt
+#✅ 2. Узнаем размер и количество строк для каждой таблицы
+SELECT
+    schemaname AS "Схема",
+    tablename AS "Таблица",
+    pg_size_pretty(pg_total_relation_size(schemaname || '.' || tablename)) AS "Размер",
+    pg_size_pretty(pg_relation_size(schemaname || '.' || tablename)) AS "Данные",
+    pg_size_pretty(pg_indexes_size(schemaname || '.' || tablename)) AS "Индексы",
+    (SELECT reltuples::BIGINT FROM pg_class c JOIN pg_namespace n ON n.oid = c.relnamespace
+     WHERE n.nspname = schemaname AND c.relname = tablename) AS "Строк (оценка)"
+FROM
+    pg_tables
+WHERE
+    schemaname NOT IN ('pg_catalog', 'information_schema')
+ORDER BY
+    pg_total_relation_size(schemaname || '.' || tablename) DESC
+LIMIT 20;
+
+#✅ 4. Посмотрим структуру ключевой таблицы
+\d имя_таблицы
+
+#✅ 6. Проверим, есть ли внешние ключи и связи Чтобы понять, как таблицы связаны между собой:
+SELECT
+    tc.table_schema,
+    tc.table_name,
+    kcu.column_name,
+    ccu.table_name AS foreign_table_name,
+    ccu.column_name AS foreign_column_name
+FROM
+    information_schema.table_constraints AS tc
+JOIN information_schema.key_column_usage AS kcu
+    ON tc.constraint_name = kcu.constraint_name
+JOIN information_schema.constraint_column_usage AS ccu
+    ON ccu.constraint_name = tc.constraint_name
+WHERE
+    tc.constraint_type = 'FOREIGN KEY'
+    AND tc.table_schema NOT IN ('pg_catalog', 'information_schema');
+
+# SQL commands
+Получать данные (SELECT)
+Добавлять (INSERT)
+Менять (UPDATE)
+Удалять (DELETE)
+Создавать таблицы (CREATE TABLE)
+Анализировать (GROUP BY, JOIN, WHERE)
+
+# SQL SELECT
+SELECT * FROM users LIMIT 5; 
+* — все столбцы
+LIMIT 5 — только 5 строк (чтобы не грузить терминал) 
+
+
+
+#DUMP
+; 👉 Эта команда:
+docker exec -t lab1-postgres-1 pg_dump -U lab -d demo > demo_backup_$(date +%Y%m%d).sql
+; Запускает pg_dump внутри контейнера
+; Делает дамп базы demo
+; Сохраняет в файл с датой, например: demo_backup_20250917.sql
+
+; Если база большая (3.1 ГБ!), лучше сжать:
+docker exec -t lab1-postgres-1 pg_dump -U lab -d demo | gzip > demo_backup_$(date +%Y%m%d).sql.gz
+docker exec -t lab1-postgres-1 pg_dump -U lab -d demo | pigz > demo_backup_$(date +%Y%m%d).sql.gz
+; Тогда файл будет, например: demo_backup_20250917.sql.gz — в 5-10 раз меньше.
+; Сохраить только схему
+docker exec -t lab1-postgres-1 pg_dump -U lab -d demo --schema-only > demo_schema.sql
+
+# 1. Удаляем старую базу
+docker exec -i lab1-postgres-1 psql -U lab -d postgres -c "DROP DATABASE IF EXISTS demo;"
+# 2. Создаём чистую
+docker exec -i lab1-postgres-1 psql -U lab -d postgres -c "CREATE DATABASE demo;"
+# 3. Восстанавливаем из сжатого дампа
+gunzip < demo_backup_20250917.sql.gz | docker exec -i lab1-postgres-1 psql -U lab -d demo
+# 3. Если .sql а не .gz
+docker exec -i lab1-postgres-1 psql -U lab -d demo < demo_backup_20250917.sql
+# 4. Проверяем
+docker exec -it lab1-postgres-1 psql -U lab -d demo -c "\dt"
+
 
 # Запустить контейнер
 docker run [OPTIONS] IMAGE [COMMAND] [ARG...]
