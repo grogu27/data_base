@@ -1,0 +1,20 @@
+docker ps | grep my_postgres
+docker kill my_postgres
+docker compose my_postgres -d
+docker exec -it my_postgres psql -U postgres
+SELECT pg_is_in_recovery();
+docker logs my_postgres | grep -E "recovery|WAL|redo"
+docker logs my_postgres > wal_recovery.log
+
+
+docker exec -it my_postgres psql -U postgres -c "SELECT count(*) FROM pg_stat_all_tables;"
+
+
+
+
+$PGHOME/bin/pg_ctl -D $PGDATA -l logfile start
+$PGHOME/bin/psql -h localhost -p 5432 postgres
+pg_ctl -D /var/lib/postgresql/data stop -m immediate
+cat $PGDATA/logfile | tail -n 50
+
+ls -lh $PGDATA/pg_wal

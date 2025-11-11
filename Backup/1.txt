@@ -1,0 +1,6 @@
+# создаём папку для бэкапов и копируем из контейнера
+mkdir -p ~/pg_backups
+BACKUP_DIR=~/pg_backups/pgdata_backup_$(date +%s)
+mkdir -p "$BACKUP_DIR"
+docker cp my_postgres:/var/lib/postgresql/data "$BACKUP_DIR"
+echo "Backup saved to $BACKUP_DIR (host path)"

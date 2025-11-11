@@ -1,0 +1,6 @@
+$PGHOME/bin/pg_ctl -D $PGDATA -l logfile start
+$PGHOME/bin/psql -h localhost -p 5432 postgres
+pg_ctl -D /var/lib/postgresql/data stop -m immediate
+cat $PGDATA/logfile | tail -n 50
+
+ls -lh $PGDATA/pg_wal
